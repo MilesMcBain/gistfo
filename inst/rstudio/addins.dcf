@@ -1,0 +1,4 @@
+Name: GiSTFO
+Description: Sends the active RStudio source editor to Github as a private gist.
+Binding: gistfo
+Interactive: yes
