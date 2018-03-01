@@ -7,4 +7,4 @@ Turn your RStudio untitled tabs into gists. You monsters.
 
 ![very niiice](https://cdn.rawgit.com/MilesMcBain/gistfo/64f35c97/inst/media/carbon.png)
 
-Carbon mode copies gist url to your clipboard so you can easily paste into a carbon tweet. 
+Carbon mode opens the code on https://caron.now.sh and copies gist url to your clipboard so you can easily paste into a carbon tweet. 
