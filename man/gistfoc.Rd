@@ -4,8 +4,8 @@
 \alias{gistfoc}
 \title{Create a public Github gist containing the active RStudio tab and browse to it,
 then open the gist in carbon.now.sh, for easily Tweeting a saucy code pic.
-Gist file is named: RStudio_<project>_<filename or file_id>. file_id is a unique id for
-untitled files. It does not relate to the untitled number.}
+The Gist URL is copied to your clipboard in case you want to paste it
+into your carbon tweet.}
 \usage{
 gistfoc()
 }
@@ -13,8 +13,6 @@ gistfoc()
 nothing.
 }
 \description{
-Create a public Github gist containing the active RStudio tab and browse to it,
-then open the gist in carbon.now.sh, for easily Tweeting a saucy code pic.
 Gist file is named: RStudio_<project>_<filename or file_id>. file_id is a unique id for
 untitled files. It does not relate to the untitled number.
 }
