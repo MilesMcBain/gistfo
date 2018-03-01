@@ -2,7 +2,9 @@
 % Please edit documentation in R/gistfo.R
 \name{gistfo}
 \alias{gistfo}
-\title{Create a private gist containing the active RStudio tab and browse to it.}
+\title{Create a private Github gist containing the active RStudio tab and browse to it.
+File is named: RStudio_<project>_<filename or file_id>. file_id is a unique id for
+untitled files. It does not relate to the untitled number.}
 \usage{
 gistfo()
 }
@@ -10,5 +12,7 @@ gistfo()
 nothing.
 }
 \description{
-Create a private gist containing the active RStudio tab and browse to it.
+Create a private Github gist containing the active RStudio tab and browse to it.
+File is named: RStudio_<project>_<filename or file_id>. file_id is a unique id for
+untitled files. It does not relate to the untitled number.
 }
