@@ -42,7 +42,7 @@ gistfo_base <- function(mode){
         the_gist <- gistr::gist_create(filename = gist_name,
                            public = public,
                            browse = browse,
-                           code = source_context$contents
+                           code = paste0(source_context$contents, collapse = "\n")
                            )
         if(mode == "carbon"){
           browseURL(paste0(CARBON_URL, the_gist$url))
