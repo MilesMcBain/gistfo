@@ -9,13 +9,20 @@ Turn your RStudio untitled tabs into gists. You monsters.
 
 Carbon mode opens the code on https://carbon.now.sh and copies gist url to your clipboard so you can easily paste into a carbon tweet. 
 
-## To Install
+## Installation
 ```
 library(devtools)
 install_github("MilesMcBain/gistfo")
+```
+## Usage
+
+### As an addin
+From the RStudio Addins menu select either `Make Tab into Gist` or `Send Tab as Gist to Carbon`.
+
+### From the console
+```
 library(gistfo)
 ```
-
 Make sure an RStudio tab is active, then run `gistfo()`. It will open a browser window asking you to authenticate a third-party OAuth application. Should be all good from there. 
 
 Carbon mode: `gistfoc()`
