@@ -27,7 +27,7 @@ gistfo_base <- function(mode){
         }
         source_context <- rstudioapi::getSourceEditorContext()
         if(source_context$path == ''){
-          name <- paste("unititled",source_context$id,sep = "_")
+          name <- paste("untitled",source_context$id,sep = "_")
         }else{
           name <- tail(unlist(strsplit(x = source_context$path, split = "/")), 1)
         }
