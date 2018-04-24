@@ -1,9 +1,9 @@
-Name: Make Tab into Gist
-Description: Sends the active RStudio source editor to Github as a private gist.
+Name: Make Gist from Text or Tab
+Description: Sends the active selection or RStudio source editor to Github as a private gist.
 Binding: gistfo
 Interactive: yes
 
-Name: Send Tab as Gist to Carbon
-Description: Sends the active RStudio source editor to Github as a public gist. Opens in carbon.sh.
+Name: Make Gist and Send to Carbon
+Description: Sends the active selection or RStudio source editor to Github as a public gist. Opens in carbon.sh.
 Binding: gistfoc
 Interactive: yes
