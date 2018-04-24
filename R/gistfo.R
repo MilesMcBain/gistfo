@@ -38,11 +38,13 @@ gistfo_base <- function(mode){
           project <- ""
         }
         gist_name <- paste("RStudio",project,name, sep="_")
+        gist_content <- source_context$selection[[1]]$text
+        if (gist_content == "") gist_content <- paste0(source_context$contents, collapse = "\n")
 
         the_gist <- gistr::gist_create(filename = gist_name,
                            public = public,
                            browse = browse,
-                           code = paste0(source_context$contents, collapse = "\n")
+                           code = gist_content
                            )
         if(mode == "carbon"){
           browseURL(paste0(CARBON_URL, the_gist$url))
