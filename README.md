@@ -17,12 +17,13 @@ install_github("MilesMcBain/gistfo")
 ## Usage
 
 ### As an addin
-From the RStudio Addins menu select either `Make Tab into Gist` or `Send Tab as Gist to Carbon`.
+Select the text or source file tab you would like to turn into a Gist.
+Then, from the RStudio Addins menu select either `Make Gist from Text or Tab` or `Make Gist and Send to Carbon`.
 
 ### From the console
 ```
 library(gistfo)
 ```
-Make sure an RStudio tab is active, then run `gistfo()`. It will open a browser window asking you to authenticate a third-party OAuth application. Should be all good from there. 
+Make sure an RStudio tab is active or select text in a source file, then run `gistfo()`. It will open a browser window asking you to authenticate a third-party OAuth application. Should be all good from there. 
 
 Carbon mode: `gistfoc()`

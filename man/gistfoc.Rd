@@ -2,10 +2,7 @@
 % Please edit documentation in R/gistfo.R
 \name{gistfoc}
 \alias{gistfoc}
-\title{Create a public Github gist containing the active RStudio tab and browse to it,
-then open the gist in carbon.now.sh, for easily Tweeting a saucy code pic.
-The Gist URL is copied to your clipboard in case you want to paste it
-into your carbon tweet.}
+\title{Create a public Github gist and send to carbon.now.sh, then browse to both.}
 \usage{
 gistfoc()
 }
@@ -13,6 +10,10 @@ gistfoc()
 nothing.
 }
 \description{
-Gist file is named: RStudio_<project>_<filename or file_id>. file_id is a unique id for
-untitled files. It does not relate to the untitled number.
+Create a public Github gist and browse to it, then open the gist in
+\href{https://carbon.now.sh}{carbon.now.sh}, for easily Tweeting a saucy code pic.
+The gist will contain the active text selection or the active RStudio tab.
+Gist file is named: \code{RStudio_<project>_<?selection>_<filename or file_id>}.
+\code{file_id} is a unique id for untitled files. It does not relate to the
+untitled number.
 }
