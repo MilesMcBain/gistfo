@@ -1,7 +1,9 @@
 Package: gistfo
 Title: Get it Somewhere The F Online
 Version: 0.0.1
-Authors@R: person("Miles", "McBain", email = "miles.mcbain@gmail.com", role = c("aut", "cre"))
+Authors@R: c(
+    person("Miles", "McBain", email = "miles.mcbain@gmail.com", role = c("aut", "cre")),
+    person("Garrick", "Aden-Buie", role = "aut"))
 Description: Sends the currently active RStudio tab or selection to Github as a private gist. 
              Can also create a public gist and send to carbon.now.sh for easy Tweeting of saucy code pic.
 Depends: R (>= 3.4.0)
