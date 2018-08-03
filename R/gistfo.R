@@ -78,5 +78,6 @@ url_git_io <- function(url) {
         curl::handle_setform(h, url = url)
         r <- curl::curl_fetch_memory("https://git.io", h)
         if (!r$status %in% 200:203) return(url)
-        curl::parse_headers_list(r$headers)$location
+        short_url <- curl::parse_headers_list(r$headers)$location
+        if (!is.null(short_url) && grepl("git\\.io", short_url)) short_url else url
 }
