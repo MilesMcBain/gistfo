@@ -11,8 +11,10 @@ Imports:
     rstudioapi (>= 0.6),
     gistr (>= 0.4.0),
     clipr (>= 0.3.0)
+Suggests:
+    curl  (>= 1.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 Roxygen: list(markdown = TRUE)
