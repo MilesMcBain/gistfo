@@ -1,4 +1,4 @@
-CARBON_URL <- "https://carbon.now.sh/?bg=rgba(0,0,0,0)&t=solarized%20dark&l=r&ds=true&wc=true&wa=true&pv=48px&ph=32px&ln=true"
+CARBON_URL <- "https://carbon.now.sh/{gist_id}?bg=rgba(0,0,0,0)&t=solarized%20dark&l=r&ds=true&wc=true&wa=true&pv=48px&ph=32px&ln=true"
 
 #' Create a private Github gist and browse to it.
 #'
@@ -52,14 +52,33 @@ gistfo_base <- function(mode){
           gist_name <- paste("RStudio",project,"selection",name, sep="_")
         }
 
-        the_gist <- gistr::gist_create(filename = gist_name,
+        gist_file <- file.path(tempdir(), gist_name)
+        cat(gist_content, file = gist_file)
+        the_gist <- gistr::gist_create(files = gist_file,
                            public = public,
-                           browse = browse,
-                           code = gist_content
-                           )
+                           browse = browse)
         if(mode == "carbon"){
-          browseURL(paste0(CARBON_URL, the_gist$url))
+          # Add URL to gist as comment at bottom of gist
+          gist_url <- url_git_io(the_gist$url)
+          cat("\n\n#", gist_url, file = gist_file, append = TRUE)
+          the_gist <- gistr::update_files(the_gist, gist_file)
+          gistr::update(the_gist)
+
+          # Send to carbon
+          gist_id <- the_gist$id
+          utils::browseURL(glue::glue(CARBON_URL))
           clipr::write_clip(the_gist$url)
         }
         invisible(NULL)
+}
+
+# Create Shortlink for URL using git.io
+url_git_io <- function(url) {
+        if (!requireNamespace("curl", quietly = TRUE)) return(url)
+        h <- curl::new_handle()
+        curl::handle_setform(h, url = url)
+        r <- curl::curl_fetch_memory("https://git.io", h)
+        if (!r$status %in% 200:203) return(url)
+        short_url <- curl::parse_headers_list(r$headers)$location
+        if (!is.null(short_url) && grepl("git\\.io", short_url)) short_url else url
 }
