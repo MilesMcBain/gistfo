@@ -1,4 +1,4 @@
-CARBON_URL <- "https://carbon.now.sh/?bg=rgba(0,0,0,0)&t=solarized%20dark&l=r&ds=true&wc=true&wa=true&pv=48px&ph=32px&ln=true"
+CARBON_URL <- "https://carbon.now.sh/{gist_id}?bg=rgba(0,0,0,0)&t=solarized%20dark&l=r&ds=true&wc=true&wa=true&pv=48px&ph=32px&ln=true"
 
 #' Create a private Github gist and browse to it.
 #'
@@ -65,7 +65,8 @@ gistfo_base <- function(mode){
           gistr::update(the_gist)
 
           # Send to carbon
-          utils::browseURL(paste0(CARBON_URL, the_gist$url))
+          gist_id <- the_gist$id
+          utils::browseURL(glue::glue(CARBON_URL))
           clipr::write_clip(the_gist$url)
         }
         invisible(NULL)
