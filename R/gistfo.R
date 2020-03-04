@@ -1,4 +1,4 @@
-CARBON_URL <- "https://carbon.now.sh/{gist_id}?bg=rgba(0,0,0,0)&t=solarized%20dark&l=r&ds=true&wc=true&wa=true&pv=48px&ph=32px&ln=true"
+CARBON_URL <- "https://carbon.now.sh/{gist_id}"
 
 #' Create a private Github gist and browse to it.
 #'
@@ -59,7 +59,7 @@ gistfo_base <- function(mode){
                            browse = browse)
         if(mode == "carbon"){
           # Add URL to gist as comment at bottom of gist
-          gist_url <- url_git_io(the_gist$url)
+          gist_url <- url_git_io(the_gist$html_url)
           cat("\n\n#", gist_url, file = gist_file, append = TRUE)
           the_gist <- gistr::update_files(the_gist, gist_file)
           gistr::update(the_gist)
@@ -78,7 +78,7 @@ url_git_io <- function(url) {
         h <- curl::new_handle()
         curl::handle_setform(h, url = url)
         r <- curl::curl_fetch_memory("https://git.io", h)
-        if (!r$status %in% 200:203) return(url)
+        if (!r$status_code %in% 200:203) return(url)
         short_url <- curl::parse_headers_list(r$headers)$location
         if (!is.null(short_url) && grepl("git\\.io", short_url)) short_url else url
 }
