@@ -41,7 +41,7 @@ gistfo_base <- function(mode = c("gistfo", "carbon")) {
   if (!is.null(project)) {
     project <- last(strsplit(x = project, split = "/")[[1]])
   } else {
-    project <- ""
+    project <- "RStudio"
   }
   gist_content <- source_context$selection[[1]]$text
   if (gist_content == "") {
