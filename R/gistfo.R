@@ -26,17 +26,11 @@ gistfo <- function() gistfo_base(mode = "gistfo")
 #' @export
 gistfoc <- function() gistfo_base(mode = "carbon")
 
-gistfo_base <- function(mode) {
-  if (mode == "gistfo") {
-    browse <- TRUE
-    public <- FALSE
-  } else if (mode == "carbon") {
-    browse <- TRUE
-    public <- TRUE
-  } else {
-    stop("mode must be 'gistfo' or 'carbon'")
-  }
+gistfo_base <- function(mode = c("gistfo", "carbon")) {
+  mode <- match.arg(mode)
+
   source_context <- rstudioapi::getSourceEditorContext()
+
   if (source_context$path == "") {
     name <- paste0("untitled_", source_context$id, ".R")
   } else {
@@ -62,10 +56,11 @@ gistfo_base <- function(mode) {
   cat(gist_content, file = gist_file)
   the_gist <- gistr::gist_create(
     files = gist_file,
-    public = public,
-    browse = browse
+    public = identical(mode, "carbon"),
+    browse = FALSE
   )
   if (!identical(mode, "carbon")) {
+    utils::browseURL(the_gist$url)
     return(the_gist$url)
   }
 
@@ -79,8 +74,8 @@ gistfo_base <- function(mode) {
     gistr::update(the_gist)
   }
 
-  gist_id <- the_gist$id
-  utils::browseURL(glue::glue(CARBON_URL))
+  utils::browseURL(the_gist$url)
+  utils::browseURL(glue::glue(CARBON_URL, gist_id = the_gist$id))
   gist_url
 }
 
