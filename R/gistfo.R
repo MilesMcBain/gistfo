@@ -60,8 +60,8 @@ gistfo_base <- function(mode = c("gistfo", "carbon")) {
     browse = FALSE
   )
   if (!identical(mode, "carbon")) {
-    utils::browseURL(the_gist$url)
-    return(the_gist$url)
+    utils::browseURL(the_gist$html_url)
+    return(the_gist$html_url)
   }
 
   # send to carbon ----
@@ -74,7 +74,7 @@ gistfo_base <- function(mode = c("gistfo", "carbon")) {
     gistr::update(the_gist)
   }
 
-  utils::browseURL(the_gist$url)
+  utils::browseURL(the_gist$html_url)
   utils::browseURL(glue::glue(CARBON_URL, gist_id = the_gist$id))
   gist_url
 }
