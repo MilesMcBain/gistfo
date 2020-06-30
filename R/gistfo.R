@@ -10,7 +10,7 @@ CARBON_URL <- "https://carbon.now.sh/{gist_id}"
 #' The default file name  of the [GitHub gist](https://gist.github.com) is:
 #' `RStudio_<project>_<?selection>_<filename or file_id>`,
 #' where `file_id` is a unique id for untitled files. It does not relate to the
-#' untitled number.
+#' untitled number. You'll be asked to confirm the file name before uploading.
 #'
 #' @return The URL of the gist on GitHub. Also opens browser windows to the
 #'   GitHub gist and the carbon page (if the gist is public)
@@ -55,6 +55,8 @@ gistfo_base <- function(mode) {
   } else {
     gist_name <- paste("RStudio", project, "selection", name, sep = "_")
   }
+
+  gist_name <- ask_for_filename(gist_name)
 
   gist_file <- file.path(tempdir(), gist_name)
   cat(gist_content, file = gist_file)
@@ -118,4 +120,22 @@ comment_single_line <- function(path, comment) {
 
 last <- function(x) {
   x[[length(x)]]
+}
+
+ask_for_filename <- function(name) {
+  if (!rstudioapi::hasFun("showPrompt")) {
+    return(name)
+  }
+
+  x <- rstudioapi::showPrompt(
+    title = "Gist Name",
+    message = "Gist Filename (including extension)",
+    default = name
+  )
+
+  if (is.null(x)) {
+    stop("Upload cancelled by user", call. = FALSE)
+  }
+
+  x
 }
