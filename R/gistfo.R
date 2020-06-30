@@ -52,6 +52,10 @@ gistfo_base <- function(mode = c("gistfo", "carbon")) {
 
   # User prompts
   gist_name <- ask_for_filename(gist_name)
+  if (is.null(gist_name)) {
+    message("Upload cancelled by user")
+    return()
+  }
   open_in_carbon <- if (identical(mode, "carbon")) ask_if_carbon() else FALSE
 
   gist_file <- file.path(tempdir(), gist_name)
@@ -124,17 +128,11 @@ ask_for_filename <- function(name) {
     return(name)
   }
 
-  x <- rstudioapi::showPrompt(
+  rstudioapi::showPrompt(
     title = "Gist Name",
     message = "Gist Filename (including extension)",
     default = name
   )
-
-  if (is.null(x)) {
-    stop("Upload cancelled by user", call. = FALSE)
-  }
-
-  x
 }
 
 ask_if_carbon <- function() {
