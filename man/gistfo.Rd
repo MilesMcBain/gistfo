@@ -11,7 +11,8 @@ gistfoc()
 }
 \value{
 The URL of the gist on GitHub. Also opens browser windows to the
-GitHub gist and the carbon page (if the gist is public)
+GitHub gist. Another browser window will open if you choose to open your
+gist in Carbon and the URL of the gist will be copied to the clipboard.
 }
 \description{
 Creates a private or public gist containing the active text selection or the

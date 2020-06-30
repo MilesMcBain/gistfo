@@ -13,7 +13,8 @@ CARBON_URL <- "https://carbon.now.sh/{gist_id}"
 #' untitled number. You'll be asked to confirm the file name before uploading.
 #'
 #' @return The URL of the gist on GitHub. Also opens browser windows to the
-#'   GitHub gist and the carbon page (if the gist is public)
+#'   GitHub gist. Another browser window will open if you choose to open your
+#'   gist in Carbon and the URL of the gist will be copied to the clipboard.
 #' @name gistfo
 NULL
 
@@ -82,7 +83,7 @@ gistfo_base <- function(mode = c("gistfo", "carbon")) {
 
   utils::browseURL(the_gist$html_url)
   utils::browseURL(glue::glue(CARBON_URL, gist_id = the_gist$id))
-  gist_url
+  maybe_clip(gist_url)
 }
 
 # Create Shortlink for URL using git.io
@@ -149,4 +150,12 @@ ask_if_carbon <- function() {
     ok = "Yes",
     cancel = "No"
   )
+}
+
+maybe_clip <- function(text) {
+  has_clipr <- requireNamespace("clipr", quietly = TRUE)
+  if (has_clipr && clipr::clipr_available()) {
+    clipr::write_clip(text)
+  }
+  text
 }
