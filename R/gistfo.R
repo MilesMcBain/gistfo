@@ -8,9 +8,9 @@ CARBON_URL <- "https://carbon.now.sh/{gist_id}"
 #' converted into a beautiful screen shot.
 #'
 #' The default file name  of the [GitHub gist](https://gist.github.com) is:
-#' `RStudio_<project>_<?selection>_<filename or file_id>`,
-#' where `file_id` is a unique id for untitled files. It does not relate to the
-#' untitled number. You'll be asked to confirm the file name before uploading.
+#' `<project>_<?selection>_<filename or file_id>`, where `file_id` is a unique
+#' id for untitled files. It does not relate to the untitled number. You'll be
+#' asked to confirm or edit the file name before uploading.
 #'
 #' @return The URL of the gist on GitHub. Also opens browser windows to the
 #'   GitHub gist. Another browser window will open if you choose to open your
@@ -33,7 +33,7 @@ gistfo_base <- function(mode = c("gistfo", "carbon")) {
   source_context <- rstudioapi::getSourceEditorContext()
 
   if (source_context$path == "") {
-    name <- paste0("untitled_", source_context$id, ".R")
+    name <- paste0("untitled-", source_context$id, ".R")
   } else {
     name <- last(strsplit(x = source_context$path, split = "/")[[1]])
   }
@@ -45,10 +45,10 @@ gistfo_base <- function(mode = c("gistfo", "carbon")) {
   }
   gist_content <- source_context$selection[[1]]$text
   if (gist_content == "") {
-    gist_name <- paste("RStudio", project, name, sep = "_")
+    gist_name <- paste(project, name, sep = "_")
     gist_content <- paste0(source_context$contents, collapse = "\n")
   } else {
-    gist_name <- paste("RStudio", project, "selection", name, sep = "_")
+    gist_name <- paste(project, "selection", name, sep = "_")
   }
 
   # User prompts

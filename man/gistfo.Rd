@@ -22,9 +22,9 @@ converted into a beautiful screen shot.
 }
 \details{
 The default file name  of the \href{https://gist.github.com}{GitHub gist} is:
-\verb{RStudio_<project>_<?selection>_<filename or file_id>},
-where \code{file_id} is a unique id for untitled files. It does not relate to the
-untitled number. You'll be asked to confirm the file name before uploading.
+\verb{<project>_<?selection>_<filename or file_id>}, where \code{file_id} is a unique
+id for untitled files. It does not relate to the untitled number. You'll be
+asked to confirm or edit the file name before uploading.
 }
 \section{Functions}{
 \itemize{
