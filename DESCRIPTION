@@ -1,20 +1,27 @@
 Package: gistfo
 Title: Get it Somewhere The F Online
 Version: 0.0.1.9000
-Authors@R: c(
-    person("Miles", "McBain", email = "miles.mcbain@gmail.com", role = c("aut", "cre")),
-    person("Garrick", "Aden-Buie", role = "aut"))
-Description: Sends the currently active RStudio tab or selection to Github as a private gist. 
-             Can also create a public gist and send to carbon.now.sh for easy Tweeting of saucy code pic.
-Depends: R (>= 3.4.0)
-Imports: 
-    rstudioapi (>= 0.6),
-    gistr (>= 0.4.0),
-    glue (>= 1.1.1)
-Suggests:
-    curl  (>= 1.0)
+Authors@R: 
+    c(person(given = "Miles",
+             family = "McBain",
+             role = c("aut", "cre"),
+             email = "miles.mcbain@gmail.com"),
+      person(given = "Garrick",
+             family = "Aden-Buie",
+             role = "aut"))
+Description: Sends the currently active RStudio tab or selection
+    to Github as a private gist.  Can also create a public gist and send
+    to carbon.now.sh for easy Tweeting of saucy code pic.
 License: MIT + file LICENSE
+Depends: 
+    R (>= 3.4.0)
+Imports: 
+    gistr (>= 0.4.0),
+    glue (>= 1.1.1),
+    rstudioapi (>= 0.6)
+Suggests:
+    curl (>= 1.0)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
