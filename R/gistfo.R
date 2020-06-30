@@ -40,11 +40,11 @@ gistfo_base <- function(mode) {
   if (source_context$path == "") {
     name <- paste0("untitled_", source_context$id, ".R")
   } else {
-    name <- tail(unlist(strsplit(x = source_context$path, split = "/")), 1)
+    name <- last(strsplit(x = source_context$path, split = "/")[[1]])
   }
   project <- rstudioapi::getActiveProject()
   if (!is.null(project)) {
-    project <- tail(unlist(strsplit(x = project, split = "/")), 1)
+    project <- last(strsplit(x = project, split = "/")[[1]])
   } else {
     project <- ""
   }
@@ -114,4 +114,8 @@ comment_single_line <- function(path, comment) {
   } else if (is_file_ext(path, "js", "cpp")) {
     glue::glue("\n\n// {comment}\n", .trim = FALSE)
   } else ""
+}
+
+last <- function(x) {
+  x[[length(x)]]
 }
