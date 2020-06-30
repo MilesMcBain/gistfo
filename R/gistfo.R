@@ -32,16 +32,16 @@ gistfo_base <- function(mode = c("gistfo", "carbon")) {
 
   source_context <- rstudioapi::getSourceEditorContext()
 
-  if (source_context$path == "") {
-    name <- paste0("untitled-", source_context$id, ".R")
+  name <- if (source_context$path == "") {
+    paste0("untitled-", source_context$id, ".R")
   } else {
-    name <- last(strsplit(x = source_context$path, split = "/")[[1]])
+    last(strsplit(x = source_context$path, split = "/")[[1]])
   }
   project <- rstudioapi::getActiveProject()
-  if (!is.null(project)) {
-    project <- last(strsplit(x = project, split = "/")[[1]])
+  project <- if (!is.null(project)) {
+    last(strsplit(x = project, split = "/")[[1]])
   } else {
-    project <- "RStudio"
+    "RStudio"
   }
   gist_content <- source_context$selection[[1]]$text
   if (gist_content == "") {
