@@ -1,6 +1,6 @@
 Package: gistfo
 Title: Get it Somewhere The F Online
-Version: 0.0.1
+Version: 0.0.1.9000
 Authors@R: c(
     person("Miles", "McBain", email = "miles.mcbain@gmail.com", role = c("aut", "cre")),
     person("Garrick", "Aden-Buie", role = "aut"))
@@ -10,12 +10,11 @@ Depends: R (>= 3.4.0)
 Imports: 
     rstudioapi (>= 0.6),
     gistr (>= 0.4.0),
-    clipr (>= 0.3.0),
     glue (>= 1.1.1)
 Suggests:
     curl  (>= 1.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.0
+RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
