@@ -4,11 +4,13 @@ Version: 0.0.1.9000
 Authors@R: 
     c(person(given = "Miles",
              family = "McBain",
-             role = c("aut", "cre"),
+             role = "aut",
              email = "miles.mcbain@gmail.com"),
       person(given = "Garrick",
              family = "Aden-Buie",
-             role = "aut"))
+             role = c("aut", "cre"),
+             email = "garrick@adenbuie.com",
+             comment = c(ORCID = "0000-0002-7111-0077")))
 Description: Sends the currently active RStudio tab or selection
     to Github as a private gist.  Can also create a public gist and send
     to carbon.now.sh for easy Tweeting of saucy code pic.
