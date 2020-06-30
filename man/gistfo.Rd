@@ -15,9 +15,9 @@ GitHub gist and the carbon page (if the gist is public)
 }
 \description{
 Creates a private or public gist containing the active text selection or the
-active RStudio source file. Creating a public gist also sends the code to
-\href{https://carbon.now.sh}{carbon}, where it is converted into a beautiful
-screen shot.
+active RStudio source file. Creating a public gist also prompts you to ask if
+you want to share the code to \href{https://carbon.now.sh}{carbon}, where it is
+converted into a beautiful screen shot.
 }
 \details{
 The default file name  of the \href{https://gist.github.com}{GitHub gist} is:
@@ -29,7 +29,7 @@ untitled number. You'll be asked to confirm the file name before uploading.
 \itemize{
 \item \code{gistfo}: Create a private gist and browse to it
 
-\item \code{gistfoc}: Create a public gist and share with
+\item \code{gistfoc}: Create a public gist and optionally share with
 \href{https://carbon.now.sh}{carbon}
 }}
 

@@ -3,9 +3,9 @@ CARBON_URL <- "https://carbon.now.sh/{gist_id}"
 #' Share your code as a gist or on carbon.now.sh
 #'
 #' Creates a private or public gist containing the active text selection or the
-#' active RStudio source file. Creating a public gist also sends the code to
-#' [carbon](https://carbon.now.sh), where it is converted into a beautiful
-#' screen shot.
+#' active RStudio source file. Creating a public gist also prompts you to ask if
+#' you want to share the code to [carbon](https://carbon.now.sh), where it is
+#' converted into a beautiful screen shot.
 #'
 #' The default file name  of the [GitHub gist](https://gist.github.com) is:
 #' `RStudio_<project>_<?selection>_<filename or file_id>`,
@@ -21,7 +21,7 @@ NULL
 #' @export
 gistfo <- function() gistfo_base(mode = "gistfo")
 
-#' @describeIn gistfo Create a public gist and share with
+#' @describeIn gistfo Create a public gist and optionally share with
 #'   [carbon](https://carbon.now.sh)
 #' @export
 gistfoc <- function() gistfo_base(mode = "carbon")
@@ -50,7 +50,9 @@ gistfo_base <- function(mode = c("gistfo", "carbon")) {
     gist_name <- paste("RStudio", project, "selection", name, sep = "_")
   }
 
+  # User prompts
   gist_name <- ask_for_filename(gist_name)
+  open_in_carbon <- if (identical(mode, "carbon")) ask_if_carbon() else FALSE
 
   gist_file <- file.path(tempdir(), gist_name)
   cat(gist_content, file = gist_file)
@@ -59,7 +61,7 @@ gistfo_base <- function(mode = c("gistfo", "carbon")) {
     public = identical(mode, "carbon"),
     browse = FALSE
   )
-  if (!identical(mode, "carbon")) {
+  if (!(identical(mode, "carbon") && open_in_carbon)) {
     utils::browseURL(the_gist$html_url)
     return(the_gist$html_url)
   }
@@ -133,4 +135,20 @@ ask_for_filename <- function(name) {
   }
 
   x
+}
+
+ask_if_carbon <- function() {
+  if (!rstudioapi::hasFun("showQuestion")) {
+    return(TRUE)
+  }
+
+  rstudioapi::showQuestion(
+    title = "Open on carbon.now.sh?",
+    message = paste(
+      "Do you want to open the gist on Carbon for a beautiful,",
+      "shareable source code image?"
+    ),
+    ok = "Yes",
+    cancel = "No"
+  )
 }
