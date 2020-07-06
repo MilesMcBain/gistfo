@@ -1,6 +1,6 @@
 Package: gistfo
 Title: Get it Somewhere The F Online
-Version: 0.0.1.9000
+Version: 0.0.2
 Authors@R: 
     c(person(given = "Miles",
              family = "McBain",
