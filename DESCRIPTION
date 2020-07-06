@@ -1,6 +1,6 @@
 Package: gistfo
 Title: Get it Somewhere The F Online
-Version: 0.0.2
+Version: 0.0.2.9000
 Authors@R: 
     c(person(given = "Miles",
              family = "McBain",
@@ -20,10 +20,15 @@ Depends:
 Imports: 
     gistr (>= 0.4.0),
     glue (>= 1.1.1),
+    R6,
     rstudioapi (>= 0.6)
 Suggests:
     clipr (>= 0.3.0),
-    curl (>= 1.0)
+    curl (>= 1.0),
+    DT,
+    gh,
+    miniUI,
+    shiny
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
