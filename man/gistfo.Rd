@@ -2,16 +2,35 @@
 % Please edit documentation in R/gistfo.R
 \name{gistfo}
 \alias{gistfo}
-\title{Create a private Github gist and browse to it.}
+\alias{gistfoc}
+\title{Share your code as a gist or on carbon.now.sh}
 \usage{
 gistfo()
+
+gistfoc()
 }
 \value{
-nothing.
+The URL of the gist on GitHub. Also opens browser windows to the
+GitHub gist. Another browser window will open if you choose to open your
+gist in Carbon and the URL of the gist will be copied to the clipboard.
 }
 \description{
-The gist will contain the active text selection or the active RStudio tab.
-File is named: \code{RStudio_<project>_<?selection>_<filename or file_id>}.
-\code{file_id} is a unique id for untitled files. It does not relate to the
-untitled number.
+Creates a private or public gist containing the active text selection or the
+active RStudio source file. Creating a public gist also prompts you to ask if
+you want to share the code to \href{https://carbon.now.sh}{carbon}, where it is
+converted into a beautiful screen shot.
 }
+\details{
+The default file name  of the \href{https://gist.github.com}{GitHub gist} is:
+\verb{<project>_<?selection>_<filename or file_id>}, where \code{file_id} is a unique
+id for untitled files. It does not relate to the untitled number. You'll be
+asked to confirm or edit the file name before uploading.
+}
+\section{Functions}{
+\itemize{
+\item \code{gistfo}: Create a private gist and browse to it
+
+\item \code{gistfoc}: Create a public gist and optionally share with
+\href{https://carbon.now.sh}{carbon}
+}}
+
