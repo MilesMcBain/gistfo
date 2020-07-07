@@ -22,9 +22,18 @@ GithubGists <- R6::R6Class(
     n_pages = function() {
       length(private$pages)
     },
-    view = function(page = NULL) {
+    gist = function(id) {
+      stopifnot(is.character(id), length(id) == 1)
+      for (page in private$pages) {
+        for (gist in page) {
+          if (gist$id == id) return(gist)
+        }
+      }
+      stop("Gist not found: ", id)
+    },
+    view = function(page = NULL, raw = FALSE) {
       if (is.null(page)) {
-        pages <- lapply(seq_along(private$pages), self$view)
+        pages <- lapply(seq_along(private$pages), self$view, raw = raw)
         out <- list()
         for (item in pages) {
           out <- c(out, item)
@@ -43,6 +52,7 @@ GithubGists <- R6::R6Class(
       }
 
       gists <- private$pages[[page]]
+      if (raw) return(gists)
 
       lapply(gists, function(g) {
         c(
@@ -50,6 +60,31 @@ GithubGists <- R6::R6Class(
           list(files = paste(names(g$files), collapse = ", "))
         )
       })
+    },
+    df = function(page = NULL, icon_link = TRUE) {
+      x <- self$view(page)
+      x <- lapply(x, function(g) {
+        g$public <- ifelse(g$public, "Public", "Private")
+        if (icon_link) {
+          g$html_url <- paste0(
+            '<a href="', g$html_url, '"><svg xmlns="http://www.w3.org/2000/svg" ',
+            'width="16" height="16" viewBox="0 0 24 24" fill="none"',
+            'stroke="currentColor" stroke-width="2" stroke-linecap="round"',
+            'stroke-linejoin="round" class="feather feather-external-link">',
+            '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>',
+            '<polyline points="15 3 21 3 21 9"></polyline>',
+            '<line x1="10" y1="14" x2="21" y2="3"></line></svg></a>'
+          )
+        }
+        g$updated_at <- sub("([\\d-]{10})T([\\d:]{5}).+", "\\1 \\2", g$updated_at, perl = TRUE)
+        g$created_at <- sub("([\\d-]{10})T([\\d:]{5}).+", "\\1 \\2", g$created_at, perl = TRUE)
+        g
+      })
+      if (length(x) == 1) {
+        as.data.frame(x)
+      } else {
+        as.data.frame(do.call("rbind", x))
+      }
     }
   ),
   private = list(
@@ -65,11 +100,19 @@ GithubGists <- R6::R6Class(
 
 
 gistfo_app <- function(user = NULL) {
-  requires_pkg("miniUI")
+  requires_pkg("gh")
   requires_pkg("shiny")
-  requires_pkg("DT")
+  requires_pkg("miniUI")
+  requires_pkg("reactable")
+
+  gh_user <- gh::gh_whoami()$login
 
   gists <- GithubGists$new(user = user)
+  if (!gists$complete) gists$next_page()
+
+  owns_gist <- function(id) {
+    gh_user == gists$gist(id)$owner$login
+  }
 
   ui <- miniUI::miniPage(
     title = "GitHub Gists",
@@ -84,59 +127,14 @@ gistfo_app <- function(user = NULL) {
       )
     ),
     miniUI::miniContentPanel(
-      DT::dataTableOutput("gists", height = "100%"),
-      shiny::tags$style(shiny::HTML(
-        ".datatables .active > td > a { color: white; }",
-        ".table.dataTable td { vertical-align: middle; }"
-      ))
-    ),
-    miniUI::miniButtonBlock(
-      shiny::actionButton("page_prev", "Previous Page"),
-      shiny::actionButton("page_next", "Next Page")
-    ),
-    shiny::tags$script(shiny::HTML(
-      "Shiny.addCustomMessageHandler('disable_button', function({id, state}) {
-        const el = document.getElementById(id)
-        if (state) {
-          el.setAttribute('disabled', true)
-        } else {
-          el.removeAttribute('disabled')
-        }
-        el.classList.toggle('disabled', state)
-      })"
-    ))
+      reactable::reactableOutput("gists", height = "100%"),
+      scrollable = TRUE,
+      height = "100%"
+    )
   )
 
   server <- function(input, output, session) {
-    page <- shiny::reactiveVal(1L)
-
-    shiny::observeEvent(input$page_next, page(page() + 1L))
-    shiny::observeEvent(input$page_prev, page(page() - 1L))
-
-    disable <- function(id, when) {
-      session$sendCustomMessage("disable_button", list(id = id, state = when))
-    }
-
-    shiny::observe({
-      disable("page_prev", when = page() == 1L)
-      disable("page_next", when = gists$complete && page() == gists$n_pages())
-    })
-
-    gists_page <- shiny::reactive({
-      x <- gists$view(page())
-      x <- lapply(x, function(g) {
-        g$public <- ifelse(g$public, "Public", "Private")
-        g$html_url <- paste0('<a href="', g$html_url, '">Browse</a>')
-        g$updated_at <- sub("([\\d-]{10})T([\\d:]{5}).+", "\\1 \\2", g$updated_at, perl = TRUE)
-        g$created_at <- sub("([\\d-]{10})T([\\d:]{5}).+", "\\1 \\2", g$created_at, perl = TRUE)
-        g
-      })
-      if (length(x) == 1) {
-        as.data.frame(x)
-      } else {
-        do.call("rbind", x)
-      }
-    })
+    trigger_table_update <- shiny::reactiveVal(NULL)
 
     rstudio_open_gist_file <- shiny::reactivePoll(
       1000, session,
@@ -147,7 +145,10 @@ gistfo_app <- function(user = NULL) {
         open_tab <- rstudioapi::getSourceEditorContext()$path
         id <- basename(dirname(open_tab))
         ids <- sapply(gists$view(), function(x) x$id)
-        if (id %in% ids) basename(open_tab)
+        if (id %in% ids) {
+          if (!owns_gist(id)) return(NULL)
+          basename(open_tab)
+        }
       }
     )
 
@@ -171,22 +172,50 @@ gistfo_app <- function(user = NULL) {
       }
     })
 
-    output$gists <- DT::renderDataTable({
-      DT::datatable(
-        gists_page()[, c("description", "files", "created_at", "updated_at", "public", "html_url")],
+    output$gists <- reactable::renderReactable({
+      trigger_table_update()
+      tbl <- gists$df()[, c("description", "files", "created_at", "updated_at", "public", "html_url")]
+      names(tbl) <- c("Description", "Files", "Created", "Updated", "Public", "Link")
+      reactable::reactable(
+        tbl,
         selection = "single",
-        style = "bootstrap",
-        escape = FALSE,
-        height = "100%",
-        colnames = c("Description", "Files", "Created", "Updated", "Public", ""),
-        options = list(dom = 'ft')
+        onClick = "select",
+        borderless = TRUE,
+        searchable = TRUE,
+        pagination = TRUE,
+        paginationType = "numbers",
+        theme = reactable::reactableTheme(
+          rowSelectedStyle = list(
+            backgroundColor = "#eee",
+            boxShadow = "inset 2px 0 0 0 #337ab7"
+          ),
+          rowStyle = list(verticalAlign = "middle")
+        ),
+        columns = list(
+          Description = reactable::colDef(minWidth = 200),
+          Files = reactable::colDef(minWidth = 200),
+          Link = reactable::colDef(html = TRUE, align = "center", sortable = FALSE),
+          Public = reactable::colDef(
+            cell = function(value) if (value == "Public") "" else "\U1F512",
+            align = "center"
+          )
+        )
       )
     })
 
     gists_selected <- shiny::reactive({
-      shiny::req(gists_page())
-      shiny::req(input$gists_rows_selected)
-      gists_page()[, "id"][[input$gists_rows_selected]]
+      sel_id <- reactable::getReactableState("gists")$selected
+      shiny::req(sel_id)
+      gists$df()[, "id"][[sel_id]]
+    })
+
+    shiny::observeEvent(reactable::getReactableState("gists"), {
+      state <- reactable::getReactableState("gists")
+      shiny::req(state)
+      if (state$page != 1 && state$page == state$pages && !gists$complete) {
+        gists$next_page()
+        trigger_table_update(Sys.time())
+      }
     })
 
     shiny::observeEvent(input$cancel, shiny::stopApp())
@@ -210,7 +239,8 @@ gist_open_rstudio <- function(id, dir = tempdir(), open = TRUE) {
     open <- rstudioapi::showQuestion("Open Gist Files", "Do you want to open the gist files?", "Yes", "No")
   }
   g <- gistr::gist_save(id, dir)
-  files <- list.files(file.path(dir, id), full.names = TRUE)
+  files <- list.files(file.path(dir, id), full.names = TRUE, all.files = TRUE)
+  files <- files[!grepl("/[.]{1,2}$", files)]
   lapply(files, rstudioapi::navigateToFile)
   invisible(id)
 }

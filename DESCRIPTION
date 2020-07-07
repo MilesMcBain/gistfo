@@ -25,9 +25,9 @@ Imports:
 Suggests:
     clipr (>= 0.3.0),
     curl (>= 1.0),
-    DT,
     gh,
     miniUI,
+    reactable (>= 0.2.0),
     shiny
 Encoding: UTF-8
 LazyData: true
