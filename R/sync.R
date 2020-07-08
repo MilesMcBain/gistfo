@@ -114,8 +114,18 @@ gistfo_app <- function(user = NULL) {
     gh_user == gists$gist(id)$owner$login
   }
 
+  theme <- gistfo_app_theme()
+
   ui <- miniUI::miniPage(
     title = "GitHub Gists",
+    shiny::tags$style(shiny::HTML(
+      sprintf(paste(
+        sep = "\n",
+        "body, .ReactTable { background-color: %s; color: %s; }",
+        ".rt-search { color: %s; }",
+        ".gadget-title { background-color: %s; border-bottom: none; }"
+      ), theme$background, theme$color, theme$background, theme$title_bar_background)
+    )),
     miniUI::miniTitleBar(
       title = "GitHub Gists",
       left = shiny::div(
@@ -186,7 +196,7 @@ gistfo_app <- function(user = NULL) {
         paginationType = "numbers",
         theme = reactable::reactableTheme(
           rowSelectedStyle = list(
-            backgroundColor = "#eee",
+            backgroundColor = theme$highlight_background,
             boxShadow = "inset 2px 0 0 0 #337ab7"
           ),
           rowStyle = list(verticalAlign = "middle")
@@ -265,4 +275,36 @@ vague_time_since <- function(value) {
   prettyunits::vague_dt(
     difftime(Sys.time(), strptime(value, "%F %H:%M"))
   )
+}
+
+gistfo_app_theme <- function() {
+  theme <- list(
+    background = "#FFFFFF",
+    color = "#333333",
+    highlight_background = "#eeeeee",
+    dark = FALSE
+  )
+
+  if (!rstudioapi::hasFun("getThemeInfo")) return(theme)
+
+  rstheme <- rstudioapi::getThemeInfo()
+
+  theme$dark <- rstheme$dark
+  theme$background <- rstheme$background
+  theme$color <- rstheme$foreground
+  theme$highlight_background <- alpha_rgb(rstheme$foreground, 0.15)
+  theme$title_bar_background <- alpha_rgb(rstheme$foreground, 0.20)
+
+  theme
+}
+
+alpha_rgb <- function(x, alpha = 0.5) {
+  if (grepl("^rgb", x)) {
+    x <- sub(
+      "rgb\\((\\d+, ?\\d+, ?\\d+)\\)",
+      sprintf("rgba(\\1, %s)", alpha),
+      x
+    )
+  }
+  x
 }
