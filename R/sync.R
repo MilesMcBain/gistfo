@@ -192,10 +192,13 @@ gistfo_app <- function(user = NULL) {
           rowStyle = list(verticalAlign = "middle")
         ),
         columns = list(
-          Description = reactable::colDef(minWidth = 200),
-          Files = reactable::colDef(minWidth = 200),
-          Link = reactable::colDef(html = TRUE, align = "center", sortable = FALSE),
+          Description = reactable::colDef(minWidth = 125),
+          Files = reactable::colDef(minWidth = 125),
+          Created = reactable::colDef(minWidth = 80, cell = vague_time_since),
+          Updated = reactable::colDef(minWidth = 80, cell = vague_time_since),
+          Link = reactable::colDef(minWidth = 50, html = TRUE, align = "center", sortable = FALSE),
           Public = reactable::colDef(
+            minWidth = 60,
             cell = function(value) if (value == "Public") "" else "\U1F512",
             align = "center"
           )
@@ -253,4 +256,13 @@ update_gist <- function() {
   g <- gistr::update(g)
   message("Updated gist ", id)
   invisible(g)
+}
+
+vague_time_since <- function(value) {
+  if (!requireNamespace("prettyunits", quietly = TRUE)) {
+    return(value)
+  }
+  prettyunits::vague_dt(
+    difftime(Sys.time(), strptime(value, "%F %H:%M"))
+  )
 }

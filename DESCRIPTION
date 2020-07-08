@@ -27,6 +27,7 @@ Suggests:
     curl (>= 1.0),
     gh,
     miniUI,
+    prettyunits,
     reactable (>= 0.2.0),
     shiny
 Encoding: UTF-8
