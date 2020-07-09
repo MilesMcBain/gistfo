@@ -124,7 +124,7 @@ gistfo_app <- function(user = NULL) {
         "body, .ReactTable { background-color: %s; color: %s; }",
         ".rt-search { color: %s; }",
         ".gadget-title { background-color: %s; border-bottom: none; }"
-      ), theme$background, theme$color, theme$background, theme$title_bar_background)
+      ), theme$background, theme$color, theme$search, theme$title_bar_background)
     )),
     miniUI::miniTitleBar(
       title = "GitHub Gists",
@@ -281,7 +281,9 @@ gistfo_app_theme <- function() {
   theme <- list(
     background = "#FFFFFF",
     color = "#333333",
+    search = "#333333",
     highlight_background = "#eeeeee",
+    title_bar_background = "#e5e5e5",
     dark = FALSE
   )
 
@@ -290,8 +292,11 @@ gistfo_app_theme <- function() {
   rstheme <- rstudioapi::getThemeInfo()
 
   theme$dark <- rstheme$dark
+  if (is.null(rstheme$foreground)) return(theme)
+
   theme$background <- rstheme$background
   theme$color <- rstheme$foreground
+  theme$search <- if (theme$dark) rstheme$background else rstheme$foreground
   theme$highlight_background <- alpha_rgb(rstheme$foreground, 0.05)
   theme$title_bar_background <- alpha_rgb(rstheme$foreground, 0.10)
 
