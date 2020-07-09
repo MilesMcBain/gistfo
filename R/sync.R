@@ -292,8 +292,8 @@ gistfo_app_theme <- function() {
   theme$dark <- rstheme$dark
   theme$background <- rstheme$background
   theme$color <- rstheme$foreground
-  theme$highlight_background <- alpha_rgb(rstheme$foreground, 0.15)
-  theme$title_bar_background <- alpha_rgb(rstheme$foreground, 0.20)
+  theme$highlight_background <- alpha_rgb(rstheme$foreground, 0.05)
+  theme$title_bar_background <- alpha_rgb(rstheme$foreground, 0.10)
 
   theme
 }
