@@ -15,6 +15,8 @@ Description: Sends the currently active RStudio tab or selection
     to Github as a private gist.  Can also create a public gist and send
     to carbon.now.sh for easy Tweeting of saucy code pic.
 License: MIT + file LICENSE
+URL: https://github.com/milesmcbain/gistfo
+BugReports: https://github.com/milesmcbain/gistfo/issues
 Depends: 
     R (>= 3.4.0)
 Imports: 
