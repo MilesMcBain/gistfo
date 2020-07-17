@@ -144,6 +144,7 @@ gistfo_app <- function(user = NULL) {
         shiny::uiOutput("left_buttons")
       ),
       right = shiny::div(
+        id = "gist-action-buttons",
         miniUI::miniTitleBarButton("save_gist", "Save Gist"),
         miniUI::miniTitleBarButton("open_gist", "Open Gist", TRUE)
       )
@@ -152,7 +153,16 @@ gistfo_app <- function(user = NULL) {
       reactable::reactableOutput("gists", height = "100%"),
       scrollable = TRUE,
       height = "100%"
-    )
+    ),
+    shiny::tags$script(shiny::HTML(
+      "Shiny.addCustomMessageHandler('toggleActions', function(state) {
+        const btns = document.querySelectorAll('#gist-action-buttons button');
+        for (let i = 0; i < btns.length; i++) {
+          btns[i].classList.toggle('disabled', !state);
+          state ? btns[i].removeAttribute('disabled') : btns[i].setAttribute('disabled', true);
+        }
+      });"
+    ))
   )
 
   server <- function(input, output, session) {
@@ -233,6 +243,11 @@ gistfo_app <- function(user = NULL) {
       sel_id <- reactable::getReactableState("gists")$selected
       shiny::req(sel_id)
       gists$df()[, "id"][[sel_id]]
+    })
+
+    shiny::observe({
+      has_sel <- !is.null(reactable::getReactableState("gists")$selected)
+      session$sendCustomMessage('toggleActions', has_sel)
     })
 
     shiny::observeEvent(reactable::getReactableState("gists"), {
