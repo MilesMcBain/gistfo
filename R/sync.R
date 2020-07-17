@@ -165,6 +165,7 @@ gistfo_app <- function(user = NULL) {
       },
       valueFunc = function() {
         open_tab <- rstudioapi::getSourceEditorContext()$path
+        if (is.null(open_tab)) return(NULL)
         id <- basename(dirname(open_tab))
         ids <- sapply(gists$view(), function(x) x$id)
         if (id %in% ids) {
