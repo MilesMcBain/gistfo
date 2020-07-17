@@ -105,12 +105,24 @@ gistfo_app <- function(user = NULL) {
   requires_pkg("miniUI")
   requires_pkg("reactable")
 
+  if (is.null(user)) user <- getOption("github.username", NULL) # ?gistr::gists
   gh_user <- gh::gh_whoami()$login
+  if (is.null(user)) user <- gh_user
+
+  if (is.null(user) || !nzchar(user)) {
+    stop(
+      "Couldn't guess user name. Please set your GitHub user name via ",
+      "`options(\"github.username\" = \"ghuser\")` or set up a GitHub PAT ",
+      "(see ?gh::gh_whoami for more information). Finally, you can manually call ",
+      'the app with your username: `gistfo:::gistfo_app("ghuser")`.'
+    )
+  }
 
   gists <- GithubGists$new(user = user)
   if (!gists$complete) gists$next_page()
 
   owns_gist <- function(id) {
+    if (is.null(gh_user)) return(FALSE)
     gh_user == gists$gist(id)$owner$login
   }
 
