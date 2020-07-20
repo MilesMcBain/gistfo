@@ -106,8 +106,25 @@ gistfo_app <- function(user = NULL) {
   requires_pkg("reactable")
 
   if (is.null(user)) user <- getOption("github.username", NULL) # ?gistr::gists
-  gh_user <- gh::gh_whoami()$login
-  if (is.null(user)) user <- gh_user
+  gh_user <- gh::gh_whoami()
+  user_has_gist_scope <- if (!is.null(gh_user)) {
+    any(grepl("gist", gh_user$scopes))
+  } else {
+    FALSE
+  }
+  if (is.null(user)) {
+    user <- gh_user$login
+    if (!user_has_gist_scope) {
+      warning(
+        "You do not have the 'gist' scope enabled for your GitHub PAT for user ",
+        '"', user, '". See ?gh::gh_whoami for more information on how to set ',
+        "up your GitHub PAT and be sure to include at least the gist and user ",
+        "scopes for {gistfo} to work properly.",
+        call. = FALSE,
+        immediate. = TRUE
+      )
+    }
+  }
 
   if (is.null(user) || !nzchar(user)) {
     stop(
@@ -122,8 +139,8 @@ gistfo_app <- function(user = NULL) {
   if (!gists$complete) gists$next_page()
 
   owns_gist <- function(id) {
-    if (is.null(gh_user)) return(FALSE)
-    gh_user == gists$gist(id)$owner$login
+    if (is.null(gh_user$login)) return(FALSE)
+    gh_user$login == gists$gist(id)$owner$login
   }
 
   theme <- gistfo_app_theme()
@@ -168,42 +185,55 @@ gistfo_app <- function(user = NULL) {
   server <- function(input, output, session) {
     trigger_table_update <- shiny::reactiveVal(NULL)
 
-    rstudio_open_gist_file <- shiny::reactivePoll(
-      1000, session,
-      checkFunc = function() {
-        rstudioapi::getSourceEditorContext()$path
-      },
-      valueFunc = function() {
-        open_tab <- rstudioapi::getSourceEditorContext()$path
-        if (is.null(open_tab) || open_tab == "") return(NULL)
-        id <- basename(dirname(open_tab))
-        ids <- sapply(gists$view(), function(x) x$id)
-        if (id %in% ids) {
-          if (!owns_gist(id)) return(NULL)
-          basename(open_tab)
+    if (user_has_gist_scope) {
+      # if the user has the gist scope, then they can write gists back to their account
+      # and we check each gist to make sure they're the owner (idk, maybe forks?)
+      # then we poll RStudio for the currently open tab and if it's a gist
+      # that the app opened, we return the gist id grabbed from the temp dir
+      # where the gist is stored. Finally, we use a dynamic html output to
+      # update the buttons on the left side of the app: "Update gist-file.R"
+      rstudio_open_gist_file <- shiny::reactivePoll(
+        1000, session,
+        checkFunc = function() {
+          rstudioapi::getSourceEditorContext()$path
+        },
+        valueFunc = function() {
+          open_tab <- rstudioapi::getSourceEditorContext()$path
+          if (is.null(open_tab) || open_tab == "") return(NULL)
+          id <- basename(dirname(open_tab))
+          ids <- sapply(gists$view(), function(x) x$id)
+          if (id %in% ids) {
+            if (!owns_gist(id)) return(NULL)
+            basename(open_tab)
+          }
         }
-      }
-    )
+      )
 
-    output$left_buttons <- shiny::renderUI({
-      if (shiny::isTruthy(rstudio_open_gist_file())) {
-        filename <- rstudio_open_gist_file()
-        if (nchar(filename) > 16) {
-          filename <- paste0(substr(filename, 1, 16), "...")
+      output$left_buttons <- shiny::renderUI({
+        if (shiny::isTruthy(rstudio_open_gist_file())) {
+          filename <- rstudio_open_gist_file()
+          if (nchar(filename) > 16) {
+            filename <- paste0(substr(filename, 1, 16), "...")
+          }
+          shiny::tagList(
+            miniUI::miniTitleBarCancelButton(label = "Quit"),
+            miniUI::miniTitleBarButton(
+              "update_gist",
+              shiny::HTML(
+                paste0("Update <code>", filename, "</code>")
+              )
+            ),
+          )
+        } else {
+          miniUI::miniTitleBarCancelButton(label = "Quit")
         }
-        shiny::tagList(
-          miniUI::miniTitleBarCancelButton(label = "Quit"),
-          miniUI::miniTitleBarButton(
-            "update_gist",
-            shiny::HTML(
-              paste0("Update <code>", filename, "</code>")
-            )
-          ),
-        )
-      } else {
+      })
+    } else {
+      # User doesn't have "gist" scope, so can only quit (or open gists)
+      output$left_buttons <- shiny::renderUI({
         miniUI::miniTitleBarCancelButton(label = "Quit")
-      }
-    })
+      })
+    }
 
     output$gists <- reactable::renderReactable({
       trigger_table_update()
