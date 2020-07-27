@@ -316,11 +316,21 @@ gist_open_rstudio <- function(id, dir = tempdir(), open = TRUE) {
   invisible(id)
 }
 
-update_gist <- function() {
-  path <- rstudioapi::getSourceEditorContext()$path
-  id <- basename(dirname(path))
+update_gist <- function(path = NULL, id = NULL) {
+  if (is.null(path)) {
+    path <- rstudioapi::getSourceEditorContext()$path
+    path <- dirname(path)
+  }
+  if (!dir.exists(path)) {
+    stop("`path` should be a directory containing a gist")
+  }
+  if (is.null(id)) {
+    id <- basename(path)
+  }
   g <- gistr::gist(id)
-  g$update_files <- as.list(list.files(dirname(path), full.names = TRUE))
+  g$update_files <- as.list(list.files(
+    path, full.names = TRUE, all.files = TRUE, no.. = TRUE, include.dirs = FALSE
+  ))
   g <- gistr::update(g)
   message("Updated gist ", id)
   invisible(g)
