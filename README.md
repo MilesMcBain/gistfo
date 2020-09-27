@@ -3,17 +3,26 @@ Turn your RStudio untitled tabs into gists. You monsters.
 
 ![wat](https://raw.githubusercontent.com/MilesMcBain/gistfo/master/inst/media/gistfo.gif)
 
-*Carbon Edition* Now Available:
-
-![very niiice](https://raw.githubusercontent.com/MilesMcBain/gistfo/master/inst/media/carbon.png)
+### Carbon Edition
 
 Carbon mode opens the code on https://carbon.now.sh and copies gist url to your clipboard so you can easily paste into a carbon tweet. 
 
+![very niiice](https://raw.githubusercontent.com/MilesMcBain/gistfo/master/inst/media/carbon.png)
+
+### Gistfo The App
+
+Also includes an RStudio addin for opening and editing gists in RStudio.
+
+![gistfo_app() preview image](https://raw.githubusercontent.com/MilesMcBain/gistfo/master/inst/media/gistfo-app.png)
+
 ## Installation
 
-```
-library(devtools)
-install_github("MilesMcBain/gistfo")
+```r
+# install.packages("remotes")
+remotes::install_github("MilesMcBain/gistfo")
+
+# To install app dependencies as well
+remotes::install_github("MilesMcBain/gistfo", dependencies = TRUE)
 ```
 
 ## Usage
@@ -21,11 +30,11 @@ install_github("MilesMcBain/gistfo")
 ### As an addin
 
 Select the text or source file tab you would like to turn into a Gist.
-Then, from the RStudio Addins menu select either `Make Private Gist from Text or Tab` or `Make Public Gist and Send to Carbon`.
+Then, from the RStudio Addins menu select either _Make Private Gist from Text or Tab_ or _Make Public Gist and Send to Carbon_.
 
 ### From the console
 
-```
+```r
 library(gistfo)
 ```
 
