@@ -99,7 +99,7 @@ GithubGists <- R6::R6Class(
 )
 
 
-gistfo_app <- function(user = NULL) {
+gistfo_app <- function(user = NULL, preload_all_gists = FALSE) {
   requires_pkg("gh")
   requires_pkg("shiny")
   requires_pkg("miniUI")
@@ -137,6 +137,13 @@ gistfo_app <- function(user = NULL) {
 
   gists <- GithubGists$new(user = user)
   if (!gists$complete) gists$next_page()
+  if (isTRUE(preload_all_gists)) {
+    cat("Loading gists..")
+    while(!gists$complete) {
+      gists$next_page()
+      cat(".")
+    }
+  }
 
   owns_gist <- function(id) {
     if (is.null(gh_user$login)) return(FALSE)
