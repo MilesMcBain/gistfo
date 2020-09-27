@@ -11,7 +11,7 @@ Carbon mode opens the code on https://carbon.now.sh and copies gist url to your 
 
 ### Gistfo The App
 
-Also includes an RStudio addin for opening and editing gists in RStudio.
+Also includes **Gistfo App**, an RStudio addin for opening, editing, and updating gists in RStudio.
 
 ![gistfo_app() preview image](https://raw.githubusercontent.com/MilesMcBain/gistfo/master/inst/media/gistfo-app.png)
 
