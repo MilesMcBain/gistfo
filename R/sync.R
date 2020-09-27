@@ -236,7 +236,6 @@ gistfo_app <- function(user = NULL) {
     }
 
     output$gists <- reactable::renderReactable({
-      trigger_table_update()
       tbl <- gists$df()[, c("description", "files", "created_at", "updated_at", "public", "html_url")]
       names(tbl) <- c("Description", "Files", "Created", "Updated", "Public", "Link")
       reactable::reactable(
@@ -267,6 +266,12 @@ gistfo_app <- function(user = NULL) {
           )
         )
       )
+    })
+
+    shiny::observeEvent(trigger_table_update(), {
+      tbl <- gists$df()[, c("description", "files", "created_at", "updated_at", "public", "html_url")]
+      names(tbl) <- c("Description", "Files", "Created", "Updated", "Public", "Link")
+      reactable::updateReactable("gists", data = tbl, page = reactable::getReactableState("gists", "page"))
     })
 
     gists_selected <- shiny::reactive({
